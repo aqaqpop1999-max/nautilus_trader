@@ -25,6 +25,47 @@
 
 ---
 
+## على جوال أندرويد؟ ابدأ من هنا
+
+لا تحتاج كمبيوترًا. ثلاث طرق مرتبة من الأسهل:
+
+### أ) Google Colab — الأسهل (مُوصى به)
+
+1. اضغط هذا الرابط من متصفح الجوال (Chrome) — يفتح الدفتر جاهزًا في Colab:
+
+   <https://colab.research.google.com/github/aqaqpop1999-max/nautilus_trader/blob/arena/c765ce04-nautilus-trader/analysis/saudi_market/Saudi_Dip_Backtest.ipynb>
+
+2. سجّل الدخول بحساب Google (مجاني).
+3. في أول خلية عدّل `SYMBOL` (السهم) و`START` (الفترة)، ثم اضغط ▶️ على كل خلية بالترتيب
+   (أو من القائمة: **Runtime ← Run all**).
+4. الخلية الأخيرة ترسم منحنى رأس المال وعائد كل صفقة.
+
+> الدفتر ينسخ الملفات تلقائيًا من GitHub، فلا ترفع أي شيء يدويًا.
+> إذا لم يفتح الرابط، افتح <https://colab.research.google.com> ← **GitHub** ← الصق اسم المستودع
+> `aqaqpop1999-max/nautilus_trader` ← الفرع `arena/c765ce04-nautilus-trader` ← الملف `analysis/saudi_market/Saudi_Dip_Backtest.ipynb`.
+
+### ب) Termux (طرفية لينكس على أندرويد — مجاني)
+
+```bash
+pkg update && pkg install python git
+git clone https://github.com/aqaqpop1999-max/nautilus_trader.git
+cd nautilus_trader/analysis/saudi_market
+python phone_run.py
+```
+
+`phone_run.py` مُعدّ للجوال: افتحه بأي محرر نصوص (أو `nano phone_run.py`) وعدّل القيم في أعلى
+الملف (`SYMBOL`, `START`, `N_DOWN`, `HOLD_WEEKS`, `STOP_PCT`)، ثم شغّله كما هو بدون أي أوامر إضافية.
+
+### ج) Pydroid 3 (تطبيق بايثون بواجهة سهلة — من Google Play)
+
+1. نزّل المشروع من GitHub: زر **Code ← Download ZIP**، وفكّ الضغط بتطبيق ملفات (مثل ZArchiver).
+2. افتح تطبيق Pydroid 3 ← أيقونة المجلد ← اختر `analysis/saudi_market/phone_run.py`.
+3. عدّل `SYMBOL` و`START` في أعلى الملف، ثم اضغط ▶️ (Run).
+
+> ملاحظة: وضع Nautilus (`--mode nautilus`) لا يعمل على الجوال؛ استخدم الوضع الافتراضي (المتجهات).
+
+---
+
 ## المسار الأول (الأسهل): شغّله على جهازك — بدون تثبيت أي مكتبة
 
 الأداة الأساسية مكتوبة بـ«المكتبة القياسية» فقط، فلا تحتاج `pip install` ولا إنترنت إلا لتحميل الأسعار.

@@ -24,6 +24,9 @@
 | `vector_engine.py` | المحرك المرجعي: إشارات، صفقات، إحصاءات، تراجع أقصى، مقارنة بالشراء والاحتفاظ. |
 | `nautilus_engine.py` | نفس القواعد لكن داخل `BacktestEngine` في NautilusTrader v2 (بارات أسبوعية، عمولات، محفظة SAR). |
 | `run_backtest.py` | واجهة الأوامر التي تربط كل ما سبق. |
+| `phone_run.py` | تشغيل مبسّط للجوال (Pydroid/Termux): عدّل القيم في أعلى الملف واضغط Run. |
+| `Saudi_Dip_Backtest.ipynb` | دفتر Colab جاهز للجوال: إعدادات في خلية واحدة + رسم بياني للنتائج. |
+| `HOWTO-AR.md` | دليل عملي بالعربي: من أين تبدأ، كيف تشغّل، وكيف تقرأ النتائج. |
 
 ---
 
@@ -43,6 +46,15 @@
 ---
 
 ## التشغيل
+
+### 0) من الجوال (أندرويد) — الأسرع
+
+افتح دفتر Colab مباشرة من هذا الرابط ثم **Run all**:
+
+<https://colab.research.google.com/github/aqaqpop1999-max/nautilus_trader/blob/arena/c765ce04-nautilus-trader/analysis/saudi_market/Saudi_Dip_Backtest.ipynb>
+
+أو من Termux: `pkg install python git` ثم `python phone_run.py`.
+التفاصيل الكاملة في [`HOWTO-AR.md`](HOWTO-AR.md).
 
 ### 1) فحص سريع بدون إنترنت وبدون NautilusTrader
 

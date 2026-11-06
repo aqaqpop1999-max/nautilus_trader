@@ -66,6 +66,15 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Start date filter (defaults to 2026-01-01 for --yahoo, no filter otherwise)",
     )
+    parser.add_argument(
+        "--history-start",
+        type=date.fromisoformat,
+        default=None,
+        help=(
+            "How far back to download data for indicator warm-up "
+            "(defaults to --start, or 2026-01-01 for --yahoo)"
+        ),
+    )
     parser.add_argument("--end", type=date.fromisoformat, default=None)
     parser.add_argument("--date-format", default=None, help="strptime format for CSV dates")
 
@@ -131,7 +140,8 @@ def load_bars(args: argparse.Namespace) -> tuple[list[DailyBar], str, str]:
     if args.csv is not None:
         bars = load_csv(args.csv, date_format=args.date_format)
         return bars, str(args.csv), args.symbol or args.csv.stem.split("_")[0]
-    bars = load_yahoo(args.yahoo, start=args.start or date(2026, 1, 1), end=args.end)
+    history_start = args.history_start or args.start or date(2026, 1, 1)
+    bars = load_yahoo(args.yahoo, start=history_start, end=args.end)
     return bars, f"yahoo:{args.yahoo}", args.symbol or args.yahoo.split(".")[0]
 
 
@@ -360,8 +370,8 @@ def print_comparison(
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    bars, source, symbol = load_bars(args)
-    bars = filter_range(bars, args.start, args.end)
+    bars_all, source, symbol = load_bars(args)
+    bars = filter_range(bars_all, args.start, args.end)
     if len(bars) < 10:
         print(f"Not enough daily bars after filtering ({len(bars)}).", file=sys.stderr)
         return 1
@@ -388,6 +398,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"[index] تعذّر تحميل المرجع: {exc}", file=sys.stderr)
             return 1
 
+    # Indicators need history *before* the trading window; trade execution never does.
+    warmup_bars = benchmark_daily if benchmark_daily is not None else bars_all
+
     filter_config = filters.FilterConfig(
         use_sma=args.filter_sma,
         sma_period=args.sma_period,
@@ -397,12 +410,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     mask = None
     if filter_config.use_sma or filter_config.use_volume:
+        # The SMA needs history *before* the trading window, so fall back to the
+        # unfiltered series for indicators (never for trade execution).
         mask = filters.build_signal_mask(
             weekly,
             bars,
             n_down=args.n_down,
             config=filter_config,
-            benchmark_daily=benchmark_daily,
+            benchmark_daily=warmup_bars,
         )
     print_filters(filter_config, mask, benchmark_source=benchmark_source)
 
@@ -436,7 +451,7 @@ def main(argv: list[str] | None = None) -> int:
         print_comparison(
             weekly,
             bars,
-            benchmark_daily=benchmark_daily,
+            benchmark_daily=warmup_bars,
             n_down=args.n_down,
             hold_weeks=args.hold_weeks,
             stop_pct=stop_pct,
@@ -450,7 +465,7 @@ def main(argv: list[str] | None = None) -> int:
             weekly,
             bars,
             config=filter_config,
-            benchmark_daily=benchmark_daily,
+            benchmark_daily=warmup_bars,
             fee_rate=fee_rate,
             stop_pct=stop_pct,
             target_pct=target_pct,
