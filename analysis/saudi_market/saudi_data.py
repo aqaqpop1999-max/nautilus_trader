@@ -318,41 +318,46 @@ def load_yahoo(
 # ---------------------------------------------------------------------------
 
 
-def synthetic_2026(
+def synthetic_series(
     *,
-    start: date = date(2026, 1, 4),
-    num_days: int = 215,
-    start_price: float = 65.0,
+    start: date = date(2025, 1, 5),
+    num_days: int = 495,
+    start_price: float = 55.0,
     seed: int = 7,
 ) -> list[DailyBar]:
-    """Generate a deterministic fake 2026 series with a crash and a rebound.
+    """Generate a deterministic fake 2025-2026 series with a crash and a rebound.
 
-    The shape mimics the 2026 Saudi year (grind higher, violent Q4 drawdown,
-    sharp November rebound) but the numbers are fabricated. Use real data for
-    any actual conclusion.
+    The shape mimics the 2026 Saudi year (grind higher, violent drawdown from
+    mid-2026, sharp November rebound) and starts in 2025 so that a 200-day
+    moving average is available for the regime filter. The numbers are
+    fabricated: never draw conclusions from this series.
     """
     rng = random.Random(seed)
     days = list(trading_days(start, num_days))
     price = start_price
     bars: list[DailyBar] = []
 
-    for idx, day in enumerate(days):
-        progress = idx / max(len(days) - 1, 1)
-        if progress < 0.45:
-            drift = 0.0009
-        elif progress < 0.80:
-            drift = -0.0042
-        elif progress < 0.92:
+    for day in days:
+        if day < date(2026, 1, 1):
+            drift = 0.0006
+        elif day < date(2026, 7, 1):
+            drift = 0.0011
+        elif day < date(2026, 10, 22):
+            drift = -0.0032
+        elif day < date(2026, 11, 3):
             drift = 0.0060
         else:
             drift = 0.0015
 
-        shock = rng.gauss(0.0, 0.012)
+        shock = rng.gauss(0.0, 0.011)
         open_px = price * (1.0 + rng.gauss(0.0, 0.004))
         close_px = max(1.0, price * (1.0 + drift + shock))
         high_px = max(open_px, close_px) * (1.0 + abs(rng.gauss(0.0, 0.005)))
         low_px = min(open_px, close_px) * (1.0 - abs(rng.gauss(0.0, 0.005)))
-        volume = float(rng.randint(500_000, 6_000_000))
+
+        # Capitals show up on heavy down days: volume rises with the size of the move.
+        move = abs(close_px / price - 1.0)
+        volume = float(rng.randint(400_000, 3_000_000)) * (1.0 + 25.0 * move)
 
         bars.append(
             DailyBar(
@@ -361,12 +366,17 @@ def synthetic_2026(
                 high=round(high_px, 2),
                 low=round(low_px, 2),
                 close=round(close_px, 2),
-                volume=volume,
+                volume=round(volume, 0),
             ),
         )
         price = close_px
 
     return bars
+
+
+def synthetic_2026(**kwargs: object) -> list[DailyBar]:
+    """Backwards-compatible alias for :func:`synthetic_series`."""
+    return synthetic_series(**kwargs)  # type: ignore[arg-type]
 
 
 # ---------------------------------------------------------------------------

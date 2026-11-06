@@ -24,6 +24,8 @@ from typing import Iterable
 from typing import Sequence
 
 from saudi_data import WeeklyBar
+from signals import is_dip_signal
+from signals import signal_indices
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,28 +56,6 @@ class BacktestResult:
         return summarize(self)
 
 
-def is_dip_signal(weekly: Sequence[WeeklyBar], index: int, n_down: int) -> bool:
-    """Return True if weeks ``index - n_down + 1 .. index`` are all down weeks."""
-    first = index - n_down + 1
-    if first - 1 < 0:
-        return False
-    for offset in range(n_down):
-        current = weekly[first + offset]
-        previous = weekly[first + offset - 1]
-        if current.close >= previous.close:
-            return False
-    return True
-
-
-def signal_indices(weekly: Sequence[WeeklyBar], n_down: int) -> list[int]:
-    """Return every week index that triggers a dip signal."""
-    return [
-        index
-        for index in range(len(weekly))
-        if is_dip_signal(weekly, index, n_down)
-    ]
-
-
 def run_vector_backtest(
     weekly: Sequence[WeeklyBar],
     *,
@@ -84,9 +64,14 @@ def run_vector_backtest(
     stop_pct: float = 0.07,
     target_pct: float = 0.0,
     fee_rate: float = 0.00155,
+    mask: object | None = None,
     verbose: bool = False,
 ) -> BacktestResult:
-    """Run the weekly dip system over ``weekly`` bars."""
+    """Run the weekly dip system over ``weekly`` bars.
+
+    ``mask`` is an optional :class:`filters.SignalMask`; when supplied, only
+    signals allowed by the context filters are traded.
+    """
     if n_down < 1:
         raise ValueError("n_down must be >= 1")
     if hold_weeks < 1:
@@ -102,6 +87,9 @@ def run_vector_backtest(
     last_index = len(weekly) - 1
     while index < last_index:
         if not is_dip_signal(weekly, index, n_down):
+            index += 1
+            continue
+        if mask is not None and not mask.allowed[index]:
             index += 1
             continue
 

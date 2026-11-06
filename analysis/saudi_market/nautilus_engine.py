@@ -57,6 +57,7 @@ class WeeklyDipConfig(StrategyConfig):
         stop_pct: float,
         target_pct: float,
         notional: float,
+        allowed_weeks: frozenset[date] | None = None,
         **_kwargs: object,
     ) -> None:
         super().__init__()
@@ -67,6 +68,7 @@ class WeeklyDipConfig(StrategyConfig):
         self.stop_pct = stop_pct
         self.target_pct = target_pct
         self.notional = notional
+        self.allowed_weeks = allowed_weeks
 
 
 class WeeklyDipStrategy(Strategy):
@@ -125,6 +127,10 @@ class WeeklyDipStrategy(Strategy):
 
         if not self._is_signal(index):
             return
+
+        if self.config.allowed_weeks is not None:
+            if self._week_of(bar.ts_event) not in self.config.allowed_weeks:
+                return
 
         quantity = int(self.config.notional // close)
         if quantity <= 0:
@@ -225,6 +231,7 @@ def run_nautilus_backtest(
     stop_pct: float = 0.07,
     target_pct: float = 0.0,
     fee_rate: float = 0.00155,
+    allowed_weeks: frozenset[date] | None = None,
     verbose: bool = True,
 ) -> list[dict[str, Any]]:
     """Run the weekly dip system on the NautilusTrader v2 backtest engine."""
@@ -301,6 +308,7 @@ def run_nautilus_backtest(
             stop_pct=stop_pct,
             target_pct=target_pct,
             notional=notional,
+            allowed_weeks=allowed_weeks,
         ),
     )
     engine.add_strategy(strategy)
