@@ -64,6 +64,73 @@
 > إذا لم يفتح الرابط، افتح <https://colab.research.google.com> ← **GitHub** ← الصق اسم المستودع
 > `aqaqpop1999-max/nautilus_trader` ← الفرع `arena/c765ce04-nautilus-trader` ← الملف `analysis/saudi_market/Saudi_Dip_Backtest.ipynb`.
 
+#### إذا ظهر لك «Notebook loading error» من الرابط
+
+سبب شائع: الرابط يحتوي على اسم فرع فيه شرطة مائلة (`arena/c765ce04-nautilus-trader`)، وColab
+أحيانًا يفشل في تحليل هذا المسار. الحل الأضمن: **لا تفتح الدفتر من الرابط**، بل افتح دفترًا جديدًا
+والصق هذه الخلية الواحدة:
+
+1. افتح <https://colab.research.google.com> ← **New notebook**.
+2. الصق الكود التالي في أول خلية، عدّل `SYMBOL` و`START`، ثم اضغط ▶️.
+
+```python
+# ===== اختبار «الشراء بعد أسابيع الهبوط» — خلية واحدة =====
+SYMBOL = "1120.SR"            # 1120 الراجحي | 1010 الرياض | 2010 سابك | 2222 أرامكو | 7010 stc
+START = "2026-01-01"          # بداية المتاجرة
+HISTORY_START = "2025-01-01"  # تاريخ أقدم لمتوسط 200 يوم
+N_DOWN, HOLD_WEEKS, STOP_PCT, FEE_BPS = 3, 4, 7.0, 15.5
+COMPARE = True
+
+import os, subprocess, sys
+
+REPO = "https://github.com/aqaqpop1999-max/nautilus_trader.git"
+BRANCH = "arena/c765ce04-nautilus-trader"
+WORK = "/content/nt"
+
+if not os.path.isdir(os.path.join(WORK, "analysis")):
+    print("تنزيل الملفات...")
+    subprocess.run(
+        ["git", "clone", "-q", "--depth", "1", "--branch", BRANCH, REPO, WORK],
+        check=True,
+    )
+
+os.chdir(os.path.join(WORK, "analysis", "saudi_market"))
+
+cmd = [
+    sys.executable, "run_backtest.py",
+    "--yahoo", SYMBOL,
+    "--start", START,
+    "--history-start", HISTORY_START,
+    "--symbol", SYMBOL.split(".")[0],
+    "--n-down", str(N_DOWN),
+    "--hold-weeks", str(HOLD_WEEKS),
+    "--stop", str(STOP_PCT),
+    "--fee-bps", str(FEE_BPS),
+    "--mode", "vector",
+    "--export-trades", "trades.csv",
+]
+if COMPARE:
+    cmd.append("--compare")
+
+print(" ".join(cmd), "\n")
+res = subprocess.run(cmd, text=True, capture_output=True)
+print(res.stdout or res.stderr)
+```
+
+3. (اختياري) خلية ثانية للرسم البياني:
+
+```python
+import pandas as pd
+df = pd.read_csv("trades.csv")
+df["exit_week"] = pd.to_datetime(df["exit_week"])
+df["equity"] = (1 + df["return"]).cumprod()
+display(df)
+df.plot(x="exit_week", y="equity", marker="o", title="منحنى رأس المال")
+```
+
+> بديل آخر: جرّب فتح الدفتر برابط يعتمد على **بصمة الـ commit** بدل اسم الفرع:
+> `https://colab.research.google.com/github/aqaqpop1999-max/nautilus_trader/blob/3b0d6e2fb9401b0635ea2048ca842d36ec569a3d/analysis/saudi_market/Saudi_Dip_Backtest.ipynb`
+
 ### ب) Termux (طرفية لينكس على أندرويد — مجاني)
 
 > نزّل Termux من **F-Droid** أو من صفحة GitHub الرسمية، لا من Google Play
