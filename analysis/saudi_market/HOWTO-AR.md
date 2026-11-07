@@ -70,6 +70,17 @@
 أحيانًا يفشل في تحليل هذا المسار. الحل الأضمن: **لا تفتح الدفتر من الرابط**، بل افتح دفترًا جديدًا
 والصق هذه الخلية الواحدة:
 
+**نسخة قصيرة (4 أسطر) — انسخها كما هي:**
+
+```python
+SYMBOL, START = "1120.SR", "2026-01-01"
+!git clone -q --depth 1 -b arena/c765ce04-nautilus-trader https://github.com/aqaqpop1999-max/nautilus_trader.git /content/nt 2>/dev/null
+%cd /content/nt/analysis/saudi_market
+!python run_backtest.py --yahoo {SYMBOL} --start {START} --history-start 2025-01-01 --mode vector --compare --export-trades trades.csv
+```
+
+**نسخة كاملة (أكثر وضوحًا في الأخطاء):**
+
 1. افتح <https://colab.research.google.com> ← **New notebook**.
 2. الصق الكود التالي في أول خلية، عدّل `SYMBOL` و`START`، ثم اضغط ▶️.
 
