@@ -370,7 +370,20 @@ def print_comparison(
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    bars_all, source, symbol = load_bars(args)
+    try:
+        bars_all, source, symbol = load_bars(args)
+    except OSError as exc:
+        print(
+            "تعذّر تحميل البيانات من الإنترنت.\n"
+            f"  التفاصيل: {exc}\n"
+            "  تحقّق من الاتصال، أو استخدم ملف CSV محليًا بدل --yahoo.\n"
+            "  تذكير: أسهم السوق السعودي تحتاج اللاحقة .SR مثل 1120.SR",
+            file=sys.stderr,
+        )
+        return 1
+    except ValueError as exc:
+        print(f"تعذّر قراءة البيانات: {exc}", file=sys.stderr)
+        return 1
     bars = filter_range(bars_all, args.start, args.end)
     if len(bars) < 10:
         print(f"Not enough daily bars after filtering ({len(bars)}).", file=sys.stderr)

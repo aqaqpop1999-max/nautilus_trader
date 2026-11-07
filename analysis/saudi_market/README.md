@@ -54,6 +54,9 @@
 <https://colab.research.google.com/github/aqaqpop1999-max/nautilus_trader/blob/arena/c765ce04-nautilus-trader/analysis/saudi_market/Saudi_Dip_Backtest.ipynb>
 
 أو من Termux: `pkg install python git` ثم `python phone_run.py`.
+
+![خطوات كولاب من الجوال](docs/colab_steps.png)
+
 التفاصيل الكاملة في [`HOWTO-AR.md`](HOWTO-AR.md).
 
 ### 1) فحص سريع بدون إنترنت وبدون NautilusTrader
