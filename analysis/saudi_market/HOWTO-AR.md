@@ -129,6 +129,33 @@ python phone_run.py
 
 ---
 
+## تقرير مرئي (HTML) لكل الأسهم
+
+ملف واحد ينتج صفحة فيها رسم بياني لكل سهم + المقاييس + تقييم القاعدة:
+
+```bash
+python analysis/saudi_market/analytics.py                 # أسهمك الستة
+python analysis/saudi_market/analytics.py --yahoo 1120.SR --yahoo 2010.SR
+python analysis/saudi_market/analytics.py --demo          # تجربة بلا إنترنت
+```
+
+يُنتج `analytics_report.html` — افتحه بمتصفح الجوال. من **Colab** (الأسهل على الجوال):
+
+```python
+!git clone -q --depth 1 https://github.com/aqaqpop1999-max/nautilus_trader.git /content/nt 2>/dev/null
+%cd /content/nt/analysis/saudi_market
+!python analytics.py
+from google.colab import files; files.download("analytics_report.html")
+```
+
+يحتوي التقرير: السعر والتغير · متوسط 50/200 يوم · VWAP 20/60 · أعلى وأدنى 52 أسبوعًا ·
+تكدّس الحجم (بروفايل تقريبي) · حجم الصعود مقابل الهبوط · وهل الارتداد جاء بحجم أم لا.
+
+> بروفايل الحجم **ليس فوتبرنت**: الفوتبرنت يحتاج بيانات تنفيذ لكل صفقة، وهي غير متاحة
+> علنًا للسوق السعودي. هذا تقريب من الإغلاق والحجم اليومي — يعطي نفس القرار عمليًا.
+
+---
+
 ## المسار الأول (الأسهل): شغّله على جهازك — بدون تثبيت أي مكتبة
 
 الأداة الأساسية مكتوبة بـ«المكتبة القياسية» فقط، فلا تحتاج `pip install` ولا إنترنت إلا لتحميل الأسعار.
