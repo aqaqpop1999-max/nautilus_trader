@@ -71,7 +71,7 @@ python analysis/saudi_market/focus_report.py --demo          # تجربة بلا
 
 افتح دفتر Colab مباشرة من هذا الرابط ثم **Run all**:
 
-<https://colab.research.google.com/github/aqaqpop1999-max/nautilus_trader/blob/arena/c765ce04-nautilus-trader/analysis/saudi_market/Saudi_Dip_Backtest.ipynb>
+<https://colab.research.google.com/github/aqaqpop1999-max/nautilus_trader/blob/develop/analysis/saudi_market/Saudi_Dip_Backtest.ipynb>
 
 أو من Termux: `pkg install python git` ثم `python phone_run.py`.
 

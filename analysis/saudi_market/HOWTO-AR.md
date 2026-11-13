@@ -60,7 +60,7 @@
 
 ```python
 SYMBOL, START = "1120.SR", "2026-01-01"
-BRANCH = "arena/c765ce04-nautilus-trader"
+BRANCH = "develop"
 REPO = "https://github.com/aqaqpop1999-max/nautilus_trader.git"
 ARGS = "--history-start 2025-01-01 --mode vector --compare"
 !git clone -q --depth 1 -b {BRANCH} {REPO} /content/nt
@@ -85,12 +85,11 @@ ARGS = "--history-start 2025-01-01 --mode vector --compare"
 
 **بديل: فتح الدفتر الجاهز برابط** — قد يعمل مباشرة:
 
-<https://colab.research.google.com/github/aqaqpop1999-max/nautilus_trader/blob/arena/c765ce04-nautilus-trader/analysis/saudi_market/Saudi_Dip_Backtest.ipynb>
+<https://colab.research.google.com/github/aqaqpop1999-max/nautilus_trader/blob/develop/analysis/saudi_market/Saudi_Dip_Backtest.ipynb>
 
-إذا ظهر «**Notebook loading error**» فالسبب أن اسم الفرع فيه شرطة مائلة (`arena/c765ce04-…`)
-وColab لا يحلّلها دائمًا. استخدم الخلية أعلاه. ويمكن تجربة رابط ببصمة الـ commit بدل الفرع:
-
-<https://colab.research.google.com/github/aqaqpop1999-max/nautilus_trader/blob/3b0d6e2fb9401b0635ea2048ca842d36ec569a3d/analysis/saudi_market/Saudi_Dip_Backtest.ipynb>
+إذا ظهر «**Notebook loading error**» فاستخدم الخلية أعلاه (تعمل دائمًا).
+سبب الخطأ السابق أن الكود كان على فرع فيه شرطة مائلة؛ الآن صار على `develop` فالمفترض أن
+يفتح الرابط مباشرة.
 
 ### ب) Termux (طرفية لينكس على أندرويد — مجاني)
 
@@ -115,7 +114,7 @@ python phone_run.py
 
 1. نزّل الملف من هذا الرابط على جوالك:
 
-   <https://github.com/aqaqpop1999-max/nautilus_trader/blob/arena/c765ce04-nautilus-trader/analysis/saudi_market/single_file.py>
+   <https://github.com/aqaqpop1999-max/nautilus_trader/blob/develop/analysis/saudi_market/single_file.py>
 
    اضغط زر **Raw** ثم احفظ الملف (سيبقى في مجلد **Downloads**).
 2. افتح تطبيق **Pydroid 3** ← أيقونة المجلد ← **Downloads** ← `single_file.py`.
