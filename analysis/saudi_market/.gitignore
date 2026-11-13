@@ -4,3 +4,4 @@ __pycache__/
 analytics_report.html
 *.html
 !docs/*.html
+!docs/*.csv
