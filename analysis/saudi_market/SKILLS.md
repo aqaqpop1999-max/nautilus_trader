@@ -98,6 +98,7 @@
 | `phone_run.py` | تشغيل من مجلد المشروع (Termux/Pydroid) |
 | `run_backtest.py` | الأداة الكاملة بخياراتها (`--compare`, `--sweep`, `--index-csv`) |
 | `analytics.py` | تقرير HTML برسم بياني لكل الأسهم + مقاييس الحجم والاتجاه |
+| `focus_report.py` | تحليل مفصّل لسهم واحد: مستويات، اتجاه، قواعد، تحجيم — HTML |
 | `Saudi_Dip_Backtest.ipynb` | دفتر Colab للرسم البياني |
 | `HOWTO-AR.md` | خطوات التشغيل على الجوال + الأخطاء الشائعة |
 
